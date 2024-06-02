@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Applied Energetics 2</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button_text">Login</string>
+    <string name="toolbar_title">Applied Energetics 2</string>
+    <string name="search_description">Search</string>
+</resources>
