@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sabanciuniv.appliedenergetics2.api.ApiService;
-import com.sabanciuniv.appliedenergetics2.api.RetrofitClient;
+import com.sabanciuniv.appliedenergetics2.ApiService;
+import com.sabanciuniv.appliedenergetics2.RetrofitClient;
 import com.sabanciuniv.appliedenergetics2.models.Modpack;
 import com.sabanciuniv.appliedenergetics2.adapters.ModpackAdapter;
 import java.util.List;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Retrofit retrofit = RetrofitClient.getClient("http://your-backend-url/");
+        Retrofit retrofit = RetrofitClient.getClient("http://localhost:8080");
         apiService = retrofit.create(ApiService.class);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {

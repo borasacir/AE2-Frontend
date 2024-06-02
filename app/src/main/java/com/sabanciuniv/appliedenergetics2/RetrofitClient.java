@@ -1,5 +1,5 @@
 // RetrofitClient.java
-package com.sabanciuniv.appliedenergetics2.api;
+package com.sabanciuniv.appliedenergetics2;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
