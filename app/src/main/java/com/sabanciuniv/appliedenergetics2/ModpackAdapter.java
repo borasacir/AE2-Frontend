@@ -1,4 +1,4 @@
-package com.sabanciuniv.appliedenergetics2.adapters;
+package com.sabanciuniv.appliedenergetics2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.sabanciuniv.appliedenergetics2.R;
-import com.sabanciuniv.appliedenergetics2.models.Modpack;
+import com.sabanciuniv.appliedenergetics2.Modpack;
 import java.util.List;
 
 public class ModpackAdapter extends RecyclerView.Adapter<ModpackAdapter.ModpackViewHolder> {

@@ -5,7 +5,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.sabanciuniv.appliedenergetics2.models.Modpack;
+import com.sabanciuniv.appliedenergetics2.Modpack;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,7 +29,7 @@ public class ModpackDetailActivity extends AppCompatActivity {
 
         int modpackId = getIntent().getIntExtra("modpackId", -1);
 
-        Retrofit retrofit = RetrofitClient.getClient("http://localhost:8080");
+        Retrofit retrofit = RetrofitClient.getClient("http://10.0.2.2:8080");
         apiService = retrofit.create(ApiService.class);
 
         fetchModpackDetails(modpackId);

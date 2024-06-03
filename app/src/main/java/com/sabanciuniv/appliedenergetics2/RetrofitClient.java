@@ -1,4 +1,3 @@
-// RetrofitClient.java
 package com.sabanciuniv.appliedenergetics2;
 
 import retrofit2.Retrofit;
