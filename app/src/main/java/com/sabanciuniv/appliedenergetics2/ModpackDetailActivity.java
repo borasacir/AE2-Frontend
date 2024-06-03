@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ModpackDetailActivity extends AppCompatActivity {
 
@@ -28,7 +29,10 @@ public class ModpackDetailActivity extends AppCompatActivity {
 
         int modpackId = getIntent().getIntExtra("modpackId", -1);
 
-        Retrofit retrofit = RetrofitClient.getClient("http://10.0.2.2:8080");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         apiService = retrofit.create(ApiService.class);
 
         fetchModpackDetails(modpackId);

@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -32,7 +33,10 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup = findViewById(R.id.btn_signup);
         btnGoToLogin = findViewById(R.id.btn_go_to_login);
 
-        Retrofit retrofit = RetrofitClient.getClient("http://10.0.2.2:8080/");
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         apiService = retrofit.create(ApiService.class);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -41,13 +45,15 @@ public class SignupActivity extends AppCompatActivity {
                 String username = etSignupUsername.getText().toString();
                 String password = etSignupPassword.getText().toString();
 
-                apiService.signUp(username, password).enqueue(new Callback<String>() {
+                User user = new User(username, password);
+
+                apiService.signUp(user).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful()) {
                             String responseBody = response.body();
                             Log.d(TAG, "Response: " + responseBody);
-                            if ("Signup successful!".equals(responseBody)) {
+                            if ("User registered!".equals(responseBody)) {
                                 Toast.makeText(SignupActivity.this, "Signup successful. Please log in.", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                                 startActivity(intent);

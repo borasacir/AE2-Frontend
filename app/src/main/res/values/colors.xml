@@ -1,5 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Primary branding colors -->
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <!-- Background colors -->
+    <color name="backgroundColor">#FFFFFF</color>
+    <color name="surfaceColor">#FFFFFF</color>
+    <color name="onPrimary">#FFFFFF</color>
+
+    <!-- Text colors -->
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="textColorWhite">#FFFFFF</color>
+
+    <!-- Error colors -->
+    <color name="colorError">#B00020</color>
+    <color name="onError">#FFFFFF</color>
+
+    <!-- Custom colors -->
+    <color name="colorToolbarBackground">#6200EE</color>
+    <color name="colorToolbarText">#FFFFFF</color>
+
+    <!-- Transparent color -->
+    <color name="colorTransparent">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

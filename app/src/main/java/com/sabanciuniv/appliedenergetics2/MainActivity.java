@@ -11,19 +11,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sabanciuniv.appliedenergetics2.Modpack;
-import com.sabanciuniv.appliedenergetics2.ModpackAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements ModpackAdapter.OnModpackClickListener {
 
     private RecyclerView recyclerView;
     private ModpackAdapter adapter;
-    private ApiService apiService;
+    private OkHttpClient client;
+    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +45,11 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Retrofit retrofit = RetrofitClient.getClient("http://10.0.2.2:8080/api/");
-
-        apiService = retrofit.create(ApiService.class);
+        client = new OkHttpClient();
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement search functionality
                 searchModpacks("search_query"); // Replace with actual search query
             }
         });
@@ -56,44 +58,64 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
     }
 
     private void fetchModpacks() {
-        Call<List<Modpack>> call = apiService.getModpacks();
-        call.enqueue(new Callback<List<Modpack>>() {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "modpacks")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call<List<Modpack>> call, Response<List<Modpack>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Modpack> modpacks = response.body();
-                    adapter = new ModpackAdapter(modpacks, MainActivity.this);
-                    recyclerView.setAdapter(adapter);
-                } else {
-                    Toast.makeText(MainActivity.this, "Failed to load modpacks", Toast.LENGTH_SHORT).show();
-                }
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Error fetching modpacks", e);
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error fetching modpacks", Toast.LENGTH_SHORT).show());
             }
 
             @Override
-            public void onFailure(Call<List<Modpack>> call, Throwable t) {
-                Log.e("MainActivity", "Error fetching modpacks", t);
-                Toast.makeText(MainActivity.this, "Error fetching modpacks", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Failed to load modpacks", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+
+                String responseBody = response.body().string();
+                Gson gson = new Gson();
+                Type modpackListType = new TypeToken<List<Modpack>>() {}.getType();
+                List<Modpack> modpacks = gson.fromJson(responseBody, modpackListType);
+
+                runOnUiThread(() -> {
+                    adapter = new ModpackAdapter(modpacks, MainActivity.this);
+                    recyclerView.setAdapter(adapter);
+                });
             }
         });
     }
 
     private void searchModpacks(String query) {
-        Call<List<Modpack>> call = apiService.searchModpacks(query);
-        call.enqueue(new Callback<List<Modpack>>() {
+        Request request = new Request.Builder()
+                .url(BASE_URL + "index/search?query=" + query)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call<List<Modpack>> call, Response<List<Modpack>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Modpack> modpacks = response.body();
-                    adapter.setModpackList(modpacks);
-                } else {
-                    Toast.makeText(MainActivity.this, "No results found", Toast.LENGTH_SHORT).show();
-                }
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Error searching modpacks", e);
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error searching modpacks", Toast.LENGTH_SHORT).show());
             }
 
             @Override
-            public void onFailure(Call<List<Modpack>> call, Throwable t) {
-                Log.e("MainActivity", "Error searching modpacks", t);
-                Toast.makeText(MainActivity.this, "Error searching modpacks", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "No results found", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+
+                String responseBody = response.body().string();
+                Gson gson = new Gson();
+                Type modpackListType = new TypeToken<List<Modpack>>() {}.getType();
+                List<Modpack> modpacks = gson.fromJson(responseBody, modpackListType);
+
+                runOnUiThread(() -> {
+                    adapter.setModpackList(modpacks);
+                });
             }
         });
     }
