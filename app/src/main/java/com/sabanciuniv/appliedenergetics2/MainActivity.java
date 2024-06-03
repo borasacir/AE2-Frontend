@@ -1,18 +1,16 @@
 package com.sabanciuniv.appliedenergetics2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sabanciuniv.appliedenergetics2.ApiService;
-import com.sabanciuniv.appliedenergetics2.RetrofitClient;
 import com.sabanciuniv.appliedenergetics2.models.Modpack;
 import com.sabanciuniv.appliedenergetics2.adapters.ModpackAdapter;
 import java.util.List;
@@ -21,11 +19,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ModpackAdapter.OnModpackClickListener {
 
     private RecyclerView recyclerView;
     private ModpackAdapter adapter;
-    private LinearLayout llItemTypes;
     private ApiService apiService;
 
     @Override
@@ -40,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         ImageButton btnSearch = findViewById(R.id.btn_search);
 
-        llItemTypes = findViewById(R.id.ll_item_types);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -55,34 +51,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Dynamically add item type buttons to the horizontal scrollable bar
-        addItemTypes();
-
         fetchModpacks();
-    }
-
-    private void addItemTypes() {
-        String[] itemTypes = {"Type 1", "Type 2", "Type 3"}; // Replace with actual item types
-
-        for (String type : itemTypes) {
-            TextView textView = new TextView(this);
-            textView.setText(type);
-            textView.setPadding(16, 16, 16, 16);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Handle item type selection
-                    Toast.makeText(MainActivity.this, "Selected: " + type, Toast.LENGTH_SHORT).show();
-                    fetchItemsByType(type); // Fetch items of the selected type
-                }
-            });
-            llItemTypes.addView(textView);
-        }
-    }
-
-    private void fetchItemsByType(String type) {
-        // Implement the logic to fetch items of the selected type
-        Toast.makeText(MainActivity.this, "Fetching items for type: " + type, Toast.LENGTH_SHORT).show();
     }
 
     private void fetchModpacks() {
@@ -92,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Modpack>> call, Response<List<Modpack>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Modpack> modpacks = response.body();
-                    adapter = new ModpackAdapter(modpacks);
+                    adapter = new ModpackAdapter(modpacks, MainActivity.this);
                     recyclerView.setAdapter(adapter);
                 } else {
                     Toast.makeText(MainActivity.this, "Failed to load modpacks", Toast.LENGTH_SHORT).show();
@@ -114,8 +83,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Modpack>> call, Response<List<Modpack>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Modpack> modpacks = response.body();
-                    adapter = new ModpackAdapter(modpacks);
-                    recyclerView.setAdapter(adapter);
+                    adapter.setModpackList(modpacks);
                 } else {
                     Toast.makeText(MainActivity.this, "No results found", Toast.LENGTH_SHORT).show();
                 }
@@ -127,5 +95,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Error searching modpacks", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onModpackClick(int modpackId) {
+        Intent intent = new Intent(this, ModpackDetailActivity.class);
+        intent.putExtra("modpackId", modpackId);
+        startActivity(intent);
     }
 }
