@@ -6,29 +6,26 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/item_image"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="@string/item_image_description"
-        android:scaleType="centerCrop" />
+        android:id="@+id/modpack_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/modpack_image_desc" />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/modpack_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="8dp" />
 
     <TextView
-        android:id="@+id/tv_version"
+        android:id="@+id/modpack_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="4dp" />
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp" />
 </LinearLayout>

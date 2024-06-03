@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Implement search functionality
                 searchModpacks("search_query"); // Replace with actual search query
             }
         });
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
 
     private void fetchModpacks() {
         Request request = new Request.Builder()
-                .url(BASE_URL + "modpacks")
+                .url(BASE_URL + "index")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -82,8 +83,12 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
                 List<Modpack> modpacks = gson.fromJson(responseBody, modpackListType);
 
                 runOnUiThread(() -> {
-                    adapter = new ModpackAdapter(modpacks, MainActivity.this);
-                    recyclerView.setAdapter(adapter);
+                    if (!modpacks.isEmpty()) {
+                        adapter = new ModpackAdapter(modpacks.get(0).getItems(), MainActivity.this);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(MainActivity.this, "No modpacks available", Toast.LENGTH_SHORT).show();
+                    }
                 });
             }
         });
@@ -114,16 +119,20 @@ public class MainActivity extends AppCompatActivity implements ModpackAdapter.On
                 List<Modpack> modpacks = gson.fromJson(responseBody, modpackListType);
 
                 runOnUiThread(() -> {
-                    adapter.setModpackList(modpacks);
+                    if (!modpacks.isEmpty()) {
+                        adapter.setItemList(modpacks.get(0).getItems());
+                    } else {
+                        Toast.makeText(MainActivity.this, "No modpacks available", Toast.LENGTH_SHORT).show();
+                    }
                 });
             }
         });
     }
 
     @Override
-    public void onModpackClick(int modpackId) {
+    public void onModpackClick(String itemId) {
         Intent intent = new Intent(this, ModpackDetailActivity.class);
-        intent.putExtra("modpackId", modpackId);
+        intent.putExtra("itemId", itemId);
         startActivity(intent);
     }
 }

@@ -9,11 +9,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
-    @POST("/screen/login")
-    Call<String> login(@Body User user);
-
-    @POST("/screen/signup")
-    Call<String> signUp(@Body User user);
 
     @GET("/api/modpacks")
     Call<List<Modpack>> getModpacks();

@@ -1,32 +1,49 @@
 package com.sabanciuniv.appliedenergetics2;
 
+import java.util.List;
+
 public class Modpack {
-    private String name;
-    private String version;
-    private String description;
+    private String id;
+    private String itemTypeName;
+    private List<Item> items;
 
-    // Getters and setters
-    public String getName() {
-        return name;
+    public static class Item {
+        private String _id;
+        private String title;
+        private String description;
+        private String imageURL;
+        private String recipeURL;
+
+        public String getId() {
+            return _id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getImageURL() {
+            return imageURL;
+        }
+
+        public String getRecipeURL() {
+            return recipeURL;
+        }
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getId() {
+        return id;
     }
 
-    public String getVersion() {
-        return version;
+    public String getItemTypeName() {
+        return itemTypeName;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public List<Item> getItems() {
+        return items;
     }
 }

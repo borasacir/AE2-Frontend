@@ -7,71 +7,58 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.sabanciuniv.appliedenergetics2.R;
-import com.sabanciuniv.appliedenergetics2.Modpack;
+import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class ModpackAdapter extends RecyclerView.Adapter<ModpackAdapter.ModpackViewHolder> {
 
-    private List<Modpack> modpackList;
+    private List<Modpack.Item> itemList;
     private OnModpackClickListener listener;
 
-    public ModpackAdapter(List<Modpack> modpackList, OnModpackClickListener listener) {
-        this.modpackList = modpackList;
+    public ModpackAdapter(List<Modpack.Item> itemList, OnModpackClickListener listener) {
+        this.itemList = itemList;
         this.listener = listener;
+    }
+
+    public void setItemList(List<Modpack.Item> itemList) {
+        this.itemList = itemList;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ModpackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_modpack, parent, false);
-        return new ModpackViewHolder(view, listener);
+        return new ModpackViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ModpackViewHolder holder, int position) {
-        Modpack modpack = modpackList.get(position);
-        holder.tvName.setText(modpack.getName());
-        holder.tvVersion.setText(modpack.getVersion());
-        holder.tvDescription.setText(modpack.getDescription());
-        // Assuming you have a way to load images, like using Glide or Picasso
-        // Glide.with(holder.itemView.getContext()).load(modpack.getImageUrl()).into(holder.itemImage);
+        Modpack.Item item = itemList.get(position);
+        holder.title.setText(item.getTitle());
+        holder.description.setText(item.getDescription());
+        Glide.with(holder.itemView.getContext()).load(item.getImageURL()).into(holder.image);
+        holder.itemView.setOnClickListener(v -> listener.onModpackClick(item.getId()));
     }
 
     @Override
     public int getItemCount() {
-        return modpackList.size();
+        return itemList.size();
     }
 
-    public void setModpackList(List<Modpack> modpackList) {
-        this.modpackList = modpackList;
-        notifyDataSetChanged();
-    }
+    static class ModpackViewHolder extends RecyclerView.ViewHolder {
+        TextView title, description;
+        ImageView image;
 
-    public interface OnModpackClickListener {
-        void onModpackClick(int modpackId);
-    }
-
-    static class ModpackViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView itemImage;
-        TextView tvName;
-        TextView tvVersion;
-        TextView tvDescription;
-        OnModpackClickListener listener;
-
-        ModpackViewHolder(@NonNull View itemView, OnModpackClickListener listener) {
+        ModpackViewHolder(View itemView) {
             super(itemView);
-            itemImage = itemView.findViewById(R.id.item_image);
-            tvName = itemView.findViewById(R.id.tv_name);
-            tvVersion = itemView.findViewById(R.id.tv_version);
-            tvDescription = itemView.findViewById(R.id.tv_description);
-            this.listener = listener;
-            itemView.setOnClickListener(this);
+            title = itemView.findViewById(R.id.modpack_title);
+            description = itemView.findViewById(R.id.modpack_description);
+            image = itemView.findViewById(R.id.modpack_image);
         }
+    }
 
-        @Override
-        public void onClick(View v) {
-            listener.onModpackClick(getBindingAdapterPosition());
-        }
+    interface OnModpackClickListener {
+        void onModpackClick(String itemId);
     }
 }

@@ -6,21 +6,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+import java.io.IOException;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private EditText etSignupUsername;
-    private EditText etSignupPassword;
+    private EditText etUsername, etPassword, etConfirmPassword;
     private Button btnSignup;
-    private Button btnGoToLogin;
-    private ApiService apiService;
+    private ProgressBar loadingPB;
     private static final String TAG = "SignupActivity";
 
     @Override
@@ -28,59 +26,65 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        etSignupUsername = findViewById(R.id.et_signup_username);
-        etSignupPassword = findViewById(R.id.et_signup_password);
+        etUsername = findViewById(R.id.et_username);
+        etPassword = findViewById(R.id.et_password);
+        etConfirmPassword = findViewById(R.id.et_confirm_password);
         btnSignup = findViewById(R.id.btn_signup);
-        btnGoToLogin = findViewById(R.id.btn_go_to_login);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiService = retrofit.create(ApiService.class);
+        loadingPB = findViewById(R.id.loadingPB);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = etSignupUsername.getText().toString();
-                String password = etSignupPassword.getText().toString();
+                String username = etUsername.getText().toString();
+                String password = etPassword.getText().toString();
+                String confirmPassword = etConfirmPassword.getText().toString();
 
-                User user = new User(username, password);
+                if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                    Toast.makeText(SignupActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                apiService.signUp(user).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if (response.isSuccessful()) {
-                            String responseBody = response.body();
-                            Log.d(TAG, "Response: " + responseBody);
-                            if ("User registered!".equals(responseBody)) {
-                                Toast.makeText(SignupActivity.this, "Signup successful. Please log in.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Toast.makeText(SignupActivity.this, responseBody, Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(SignupActivity.this, "Signup failed. Please try again.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                if (!password.equals(confirmPassword)) {
+                    Toast.makeText(SignupActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.e(TAG, "Signup failed", t);
-                        Toast.makeText(SignupActivity.this, "Signup failed. Please try again.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                performSignup(username, password);
             }
         });
+    }
 
-        btnGoToLogin.setOnClickListener(new View.OnClickListener() {
+    private void performSignup(String username, String password) {
+        loadingPB.setVisibility(View.VISIBLE);
+
+        ApiClient.registerUser(username, password, new Callback() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Signup failed", e);
+                runOnUiThread(() -> {
+                    loadingPB.setVisibility(View.GONE);
+                    Toast.makeText(SignupActivity.this, "Signup failed. Please try again.", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(() -> loadingPB.setVisibility(View.GONE));
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Response: " + responseBody);
+
+                    if ("User registered!".equals(responseBody)) {
+                        Toast.makeText(SignupActivity.this, "Signup successful! Please log in.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(SignupActivity.this, responseBody, Toast.LENGTH_SHORT).show());
+                    }
+                } else {
+                    runOnUiThread(() -> Toast.makeText(SignupActivity.this, "Signup failed. Please try again.", Toast.LENGTH_SHORT).show());
+                }
             }
         });
     }
