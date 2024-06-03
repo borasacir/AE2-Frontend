@@ -7,7 +7,7 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/et_username"
+        android:id="@+id/et_signup_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/username_hint"
@@ -18,7 +18,7 @@
         android:autofillHints="username" />
 
     <EditText
-        android:id="@+id/et_password"
+        android:id="@+id/et_signup_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password_hint"
@@ -28,19 +28,20 @@
         android:minWidth="300dp"
         android:autofillHints="password" />
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/login_button_text"
-        android:minHeight="48dp"
-        android:minWidth="300dp" />
 
     <Button
         android:id="@+id/btn_signup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/signup_button_text"
+        android:minHeight="48dp"
+        android:minWidth="300dp" />
+
+    <Button
+        android:id="@+id/btn_go_to_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/go_to_login_button_text"
         android:minHeight="48dp"
         android:minWidth="300dp"
         android:layout_marginTop="16dp"/>

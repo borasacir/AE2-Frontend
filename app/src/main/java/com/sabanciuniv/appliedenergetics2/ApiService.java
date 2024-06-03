@@ -1,20 +1,24 @@
 package com.sabanciuniv.appliedenergetics2;
 
-import com.sabanciuniv.appliedenergetics2.Modpack;
 import java.util.List;
 import retrofit2.Call;
-import retrofit2.Retrofit;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ApiService {
-    @GET("modpacks")
+    @POST("/screen/login")
+    Call<String> login(@Query("username") String username, @Query("password") String password);
+
+    @POST("/screen/signup")
+    Call<String> signUp(@Query("username") String username, @Query("password") String password);
+
+    @GET("/api/modpacks")
     Call<List<Modpack>> getModpacks();
 
-    @GET("modpacks/search")
+    @GET("/api/index/search")
     Call<List<Modpack>> searchModpacks(@Query("query") String query);
 
-    @GET("modpacks/{id}")
-    Call<Modpack> getModpackDetails(@Path("id") int id);
+    @GET("/api/index/item/{id}")
+    Call<Modpack> getModpackDetails(@Query("id") int id);
 }

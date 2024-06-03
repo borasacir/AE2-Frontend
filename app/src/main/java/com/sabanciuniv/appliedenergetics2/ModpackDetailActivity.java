@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.sabanciuniv.appliedenergetics2.Modpack;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

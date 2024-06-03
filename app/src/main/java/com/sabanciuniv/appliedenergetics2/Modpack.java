@@ -1,4 +1,3 @@
-// Modpack.java
 package com.sabanciuniv.appliedenergetics2;
 
 public class Modpack {

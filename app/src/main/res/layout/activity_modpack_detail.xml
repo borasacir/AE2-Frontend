@@ -5,6 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/modpack_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/item_image_description"
+        android:layout_gravity="center" />
+
     <TextView
         android:id="@+id/modpack_name"
         android:layout_width="wrap_content"
