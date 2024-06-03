@@ -1,5 +1,6 @@
 package com.sabanciuniv.appliedenergetics2;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Modpack {
@@ -8,14 +9,15 @@ public class Modpack {
     private List<Item> items;
 
     public static class Item {
-        private String _id;
+        @SerializedName("_id")
+        private String id;
         private String title;
         private String description;
         private String imageURL;
         private String recipeURL;
 
         public String getId() {
-            return _id;
+            return id;
         }
 
         public String getTitle() {

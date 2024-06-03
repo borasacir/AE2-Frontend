@@ -2,18 +2,23 @@ package com.sabanciuniv.appliedenergetics2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import java.io.IOException;
+import java.util.List;
 
 public class ModpackDetailActivity extends AppCompatActivity {
 
@@ -32,6 +37,11 @@ public class ModpackDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modpack_detail);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         titleTextView = findViewById(R.id.modpack_title);
         descriptionTextView = findViewById(R.id.modpack_description);
         imageView = findViewById(R.id.modpack_image);
@@ -39,17 +49,27 @@ public class ModpackDetailActivity extends AppCompatActivity {
 
         client = new OkHttpClient();
 
-        String itemId = getIntent().getStringExtra("itemId");
-        if (itemId != null) {
-            fetchModpackItemDetails(itemId);
+        String itemTitle = getIntent().getStringExtra("title");
+        Log.d(TAG, "Received item title: " + itemTitle);
+        if (itemTitle != null) {
+            fetchModpackItemDetails(itemTitle);
         } else {
-            Toast.makeText(this, "No item ID found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No item title found", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void fetchModpackItemDetails(String itemId) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchModpackItemDetails(String itemTitle) {
         Request request = new Request.Builder()
-                .url(BASE_URL + "modpackitem/" + itemId)
+                .url(BASE_URL + "index/search?title=" + itemTitle)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -68,14 +88,16 @@ public class ModpackDetailActivity extends AppCompatActivity {
 
                 String responseBody = response.body().string();
                 Gson gson = new Gson();
-                Modpack.Item item = gson.fromJson(responseBody, Modpack.Item.class);
-
-                runOnUiThread(() -> {
-                    titleTextView.setText(item.getTitle());
-                    descriptionTextView.setText(item.getDescription());
-                    Glide.with(ModpackDetailActivity.this).load(item.getImageURL()).into(imageView);
-                    recipeUrlTextView.setText(item.getRecipeURL());
-                });
+                List<Modpack.Item> items = gson.fromJson(responseBody, new TypeToken<List<Modpack.Item>>(){}.getType());
+                if (items != null && !items.isEmpty()) {
+                    Modpack.Item item = items.get(0);
+                    runOnUiThread(() -> {
+                        titleTextView.setText(item.getTitle());
+                        descriptionTextView.setText(item.getDescription());
+                        Glide.with(ModpackDetailActivity.this).load(item.getImageURL()).into(imageView);
+                        recipeUrlTextView.setText(item.getRecipeURL());
+                    });
+                }
             }
         });
     }

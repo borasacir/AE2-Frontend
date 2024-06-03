@@ -36,6 +36,7 @@
 
 
         <activity android:name=".ModpackDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:exported="true" />
 
     </application>

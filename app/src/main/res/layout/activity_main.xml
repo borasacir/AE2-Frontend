@@ -1,37 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:androidx="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+        android:layout_height="43dp"
+        android:background="#18D7EF"
+        android:text="Applied Energetics 2"
+        android:textAlignment="center"
+        android:textColor="#555"
+        android:textSize="31sp"
+        android:textStyle="bold"
+        tools:text="Applied Energetics 2" />
 
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/toolbar_title"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
-
-        <ImageButton
-            android:id="@+id/btn_search"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/search_description"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_menu_search" />
-    </androidx.appcompat.widget.Toolbar>
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -10,4 +10,5 @@
     <string name="item_image_description">Item Image</string>
     <string name="go_to_login_button_text">Go to Login</string>
     <string name="modpack_image_desc">Modpack Image</string>
+
 </resources>
